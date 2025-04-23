@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kamuza - Marketingo Shopas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .glow {
+      text-shadow: 0 0 10px #1e3a8a, 0 0 20px #1e3a8a;
+    }
+    .input-dark {
+      background-color: #1f2937;
+      border: 1px solid #374151;
+      color: white;
+    }
+    .input-dark:focus {
+      border-color: #3b82f6;
+      outline: none;
+      box-shadow: 0 0 10px #3b82f6;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="w-full max-w-md p-6 bg-gray-900 rounded-2xl shadow-xl">
+    <h1 class="text-3xl font-bold text-center mb-6 glow">Kamuza</h1>
+    <p class="text-center text-sm text-gray-400 mb-4">Marketingo Shopas</p>
+
+    <!-- Tabs -->
+    <div class="flex justify-center space-x-4 mb-6">
+      <button onclick="switchTab('login')" class="tab-button text-white">Prisijungti</button>
+      <button onclick="switchTab('register')" class="tab-button text-white">Registruotis</button>
+    </div>
+
+    <!-- Prisijungimo forma -->
+    <form id="login" class="space-y-4">
+      <input type="email" id="loginEmail" placeholder="El. paštas" class="w-full px-4 py-2 rounded-lg input-dark" required />
+      <input type="password" id="loginPassword" placeholder="Slaptažodis" class="w-full px-4 py-2 rounded-lg input-dark" required />
+      <button type="submit" class="w-full py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold transition">Prisijungti</button>
+    </form>
+
+    <!-- Registracijos forma -->
+    <form id="register" class="space-y-4 hidden">
+      <input type="text" id="registerName" placeholder="Vardas" class="w-full px-4 py-2 rounded-lg input-dark" required />
+      <input type="email" id="registerEmail" placeholder="El. paštas" class="w-full px-4 py-2 rounded-lg input-dark" required />
+      <input type="password" id="registerPassword" placeholder="Slaptažodis" class="w-full px-4 py-2 rounded-lg input-dark" required />
+      <button type="submit" class="w-full py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold transition">Registruotis</button>
+    </form>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.getElementById('login').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('register').classList.toggle('hidden', tab !== 'register');
+    }
+
+    document.getElementById('register').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('registerName').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+
+      const userData = { name, email, password };
+
+      try {
+        const response = await fetch('http://localhost:5000/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP klaida: ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (response.status === 200) {
+          alert('Registracija sėkminga! Patikrinkite el. paštą.');
+          switchTab('login');
+        } else {
+          alert('Klaida: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Klaida užklausoje:', error);
+        alert('Įvyko klaida: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
